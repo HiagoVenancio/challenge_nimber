@@ -20,7 +20,7 @@ fun MainImageWithLoader(
 ) {
     val painter = rememberAsyncImagePainter(
         model = url,
-        error = painterResource(id = errorRes)
+        error = painterResource(id = errorRes),
     )
 
     Box(modifier = modifier) {

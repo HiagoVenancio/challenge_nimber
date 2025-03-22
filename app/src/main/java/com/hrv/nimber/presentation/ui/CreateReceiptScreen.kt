@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
@@ -32,7 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hrv.nimber.R
-import com.hrv.nimber.presentation.ui.components.MainImageWithLoader
+import com.hrv.nimber.presentation.ui.components.ButtonWithTextAndAction
+import com.hrv.nimber.presentation.ui.components.SwipableImageBanner
 import com.hrv.nimber.presentation.ui.components.showToast
 import com.hrv.nimber.presentation.viewmodel.ReceiptViewModel
 
@@ -80,27 +83,33 @@ fun CreateReceiptScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
-        Button(
-            onClick = {
+        val buttonModifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .padding(2.dp)
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+
+            ButtonWithTextAndAction(R.string.capture_photo_label, buttonModifier) {
+                if (photoUriList.size == 3) {
+                    showToast(context, "You can only take $maxPhotos pictures.")
+                    return@ButtonWithTextAndAction
+                }
                 val uri = viewModel.createImageFileUri(context)
                 currentPhotoUri = uri
                 uri?.let {
                     takePictureLauncher.launch(it)
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(stringResource(R.string.capture_photo_label))
+            }
         }
 
-        photoUriList.forEach { uri ->
-            MainImageWithLoader(
-                url = uri,
-                modifier = Modifier
-                    .height(150.dp)
-                    .fillMaxWidth()
-            )
-        }
+        SwipableImageBanner(imageUrls = photoUriList)
 
         OutlinedTextField(
             isError = isValidDate?.not() ?: false,

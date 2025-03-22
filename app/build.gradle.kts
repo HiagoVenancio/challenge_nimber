@@ -84,6 +84,9 @@ dependencies {
     implementation(libs.accompanist.navigation.animation)
     implementation(libs.coil.compose)
 
+    implementation(libs.accompanist.pager)
+    implementation(libs.accompanist.pager.indicators)
+
 }
 kapt {
     correctErrorTypes = true
