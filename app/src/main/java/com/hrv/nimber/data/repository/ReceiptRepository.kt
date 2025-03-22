@@ -13,11 +13,11 @@ class ReceiptRepository @Inject constructor(
 
     fun getReceipts(): Flow<List<ReceiptEntity>> = receiptDao.getAllReceipts()
 
-    suspend fun addReceipt(date: String, amount: Float, photoPath: String) {
+    suspend fun addReceipt(date: String, amount: Float, photoPaths: List<String>) {
         val receipt = ReceiptEntity(
             date = date,
             amount = amount,
-            photoPath = photoPath
+            photoPaths = photoPaths
         )
         receiptDao.insertReceipt(receipt)
     }

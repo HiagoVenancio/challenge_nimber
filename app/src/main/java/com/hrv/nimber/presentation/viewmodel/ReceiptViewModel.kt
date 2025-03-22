@@ -46,7 +46,7 @@ class ReceiptViewModel @Inject constructor(
         return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", imageFile)
     }
 
-    fun addReceipt(date: String, amount: Float, photoPath: String) {
+    fun addReceipt(date: String, amount: Float, photoPath: List<String>) {
         viewModelScope.launch {
             repository.addReceipt(date, amount, photoPath)
         }
@@ -63,5 +63,5 @@ data class ReceiptsUiModel(
     val id: Int = 0,
     val date: String = "",
     val amount: Float = 0.0f,
-    val photoPath: String = ""
+    val photoPath: List<String> = emptyList()
 )

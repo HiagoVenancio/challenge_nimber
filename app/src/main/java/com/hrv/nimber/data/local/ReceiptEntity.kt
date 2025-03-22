@@ -9,7 +9,7 @@ data class ReceiptEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: String,
     val amount: Float,
-    val photoPath: String
+    val photoPaths: List<String>
 ){
     companion object{
         const val TABLE_NAME = "receipts"

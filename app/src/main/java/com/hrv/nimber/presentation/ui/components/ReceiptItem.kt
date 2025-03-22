@@ -27,7 +27,7 @@ fun ReceiptItem(receipt: ReceiptsUiModel) {
     ) {
         Column {
             MainImageWithLoader(
-                receipt.photoPath.toUri(),
+                receipt.photoPath.first().toUri(),
                 modifier = Modifier
                     .height(250.dp)
                     .fillMaxWidth()
