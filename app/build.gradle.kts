@@ -67,6 +67,7 @@ dependencies {
 
     // Room Database
     implementation(libs.androidx.room.runtime)
+    //noinspection KaptUsageInsteadOfKsp
     kapt(libs.androidx.room.compiler) // For annotation processing
     implementation(libs.androidx.room.ktx) // Kotlin extensions
 
@@ -81,6 +82,7 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.accompanist.navigation.animation)
+    implementation(libs.coil.compose)
 
 }
 kapt {

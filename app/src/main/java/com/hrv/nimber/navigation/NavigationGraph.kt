@@ -45,7 +45,7 @@ fun AppNavigation(
 
         composable(Screen.CreateReceiptScreen.route) {
             CreateReceiptScreen(
-                navController = navController,
+                navController = navController
             )
         }
 
@@ -54,9 +54,7 @@ fun AppNavigation(
              val itemId = backStackEntry.arguments?.getString("itemId") ?: return@composable
              DetailsScreen(
                  itemId = itemId,
-                 productViewModel,
-                 navController = navController,
-                 cartViewModel = cartViewModel
+
              )
          }*/
     }

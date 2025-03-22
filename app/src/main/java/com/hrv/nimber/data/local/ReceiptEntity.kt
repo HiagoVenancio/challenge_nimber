@@ -8,7 +8,7 @@ import com.hrv.nimber.data.local.ReceiptEntity.Companion.TABLE_NAME
 data class ReceiptEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: String,
-    val amount: Double,
+    val amount: Float,
     val currency: String,
     val photoPath: String
 ){

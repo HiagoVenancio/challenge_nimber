@@ -43,7 +43,6 @@ fun ReceiptListScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Display each receipt in the list.
             items(receiptsState.value) { receipt ->
                 ReceiptItem(receipt)
             }

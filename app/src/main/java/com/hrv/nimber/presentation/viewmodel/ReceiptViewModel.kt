@@ -1,5 +1,9 @@
 package com.hrv.nimber.presentation.viewmodel
 
+import android.content.Context
+import android.net.Uri
+import android.os.Environment
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hrv.nimber.data.local.ReceiptEntity
@@ -11,6 +15,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +40,15 @@ class ReceiptViewModel @Inject constructor(
                 initialValue = emptyList()
             )
 
-    fun addReceipt(date: String, amount: Double, currency: String, photoPath: String) {
+
+    fun createImageFileUri(context: Context): Uri? {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val imageFile = File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+        return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", imageFile)
+    }
+
+    fun addReceipt(date: String, amount: Float, currency: String, photoPath: String) {
         viewModelScope.launch {
             repository.addReceipt(date, amount, currency, photoPath)
         }
@@ -48,7 +64,7 @@ class ReceiptViewModel @Inject constructor(
 data class ReceiptsUiModel(
     val id: Int = 0,
     val date: String = "",
-    val amount: Double = 0.0,
+    val amount: Float = 0.0f,
     val currency: String = "",
     val photoPath: String = ""
 )
