@@ -22,6 +22,9 @@ class ReceiptRepository @Inject constructor(
         receiptDao.insertReceipt(receipt)
     }
 
+    suspend fun getReceiptById(itemId: Int) = receiptDao.getReceiptById(itemId)
+
+
     suspend fun deleteReceipt(receipt: ReceiptEntity) {
         receiptDao.deleteReceipt(receipt)
     }

@@ -42,7 +42,7 @@ import com.hrv.nimber.presentation.viewmodel.ReceiptViewModel
 @Composable
 fun CreateReceiptScreen(
     navController: NavHostController,
-    viewModel: ReceiptViewModel = hiltViewModel()
+    viewModel: ReceiptViewModel
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current

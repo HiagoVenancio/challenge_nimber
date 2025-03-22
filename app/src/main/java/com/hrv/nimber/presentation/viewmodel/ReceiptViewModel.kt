@@ -10,9 +10,13 @@ import com.hrv.nimber.data.local.ReceiptEntity
 import com.hrv.nimber.data.mapper.toUiModel
 import com.hrv.nimber.data.repository.ReceiptRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.io.File
@@ -39,6 +43,10 @@ class ReceiptViewModel @Inject constructor(
                 initialValue = emptyList()
             )
 
+
+    private val _detailReceipt = MutableStateFlow<ReceiptsUiModel?>(null)
+    val detailReceipt: StateFlow<ReceiptsUiModel?> = _detailReceipt
+
     fun createImageFileUri(context: Context): Uri? {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -57,6 +65,17 @@ class ReceiptViewModel @Inject constructor(
             repository.deleteReceipt(receipt)
         }
     }
+
+    fun getReceiptById(itemId: Int) {
+        viewModelScope.launch {
+            repository.getReceiptById(itemId)
+                .collect {
+                    _detailReceipt.value = it.toUiModel()
+                }
+        }
+
+    }
+
 }
 
 data class ReceiptsUiModel(

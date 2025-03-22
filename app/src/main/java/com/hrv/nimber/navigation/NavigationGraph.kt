@@ -6,11 +6,14 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.hrv.nimber.presentation.ui.CreateReceiptScreen
+import com.hrv.nimber.presentation.ui.ReceiptDetails
 import com.hrv.nimber.presentation.ui.ReceiptListScreen
+import com.hrv.nimber.presentation.viewmodel.ReceiptViewModel
 
 
 sealed class Screen(val route: String) {
@@ -26,6 +29,8 @@ sealed class Screen(val route: String) {
 fun AppNavigation(
     navController: NavHostController,
 ) {
+    val receiptViewModel: ReceiptViewModel = hiltViewModel()
+
     AnimatedNavHost(
         navController = navController,
         startDestination = Screen.MainScreen.route,
@@ -38,6 +43,7 @@ fun AppNavigation(
         composable(Screen.MainScreen.route) {
             ReceiptListScreen(
                 navController = navController,
+                receiptViewModel,
                 onAddClick = {
                     navController.navigate(Screen.CreateReceiptScreen.route)
                 })
@@ -45,17 +51,17 @@ fun AppNavigation(
 
         composable(Screen.CreateReceiptScreen.route) {
             CreateReceiptScreen(
-                navController = navController
+                navController = navController,
+                receiptViewModel
             )
         }
 
-
-        /* composable(Screen.Details.route) { backStackEntry ->
-             val itemId = backStackEntry.arguments?.getString("itemId") ?: return@composable
-             DetailsScreen(
-                 itemId = itemId,
-
-             )
-         }*/
+        composable(Screen.DetailsReceiptScreen.route) { backStackEntry ->
+            val itemId = backStackEntry.arguments?.getString("itemId") ?: return@composable
+            ReceiptDetails(
+                itemId = itemId.toInt(),
+                receiptViewModel
+            )
+        }
     }
 }

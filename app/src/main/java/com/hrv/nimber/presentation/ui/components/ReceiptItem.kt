@@ -1,5 +1,6 @@
 package com.hrv.nimber.presentation.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,11 +19,14 @@ import com.hrv.nimber.extensions.toFormatCurrency
 import com.hrv.nimber.presentation.viewmodel.ReceiptsUiModel
 
 @Composable
-fun ReceiptItem(receipt: ReceiptsUiModel) {
+fun ReceiptItem(receipt: ReceiptsUiModel, onClickItem: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable {
+                onClickItem.invoke(receipt.id)
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column {
