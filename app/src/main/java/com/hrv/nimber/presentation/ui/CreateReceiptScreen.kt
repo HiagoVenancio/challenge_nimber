@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -21,12 +22,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hrv.nimber.R
 import com.hrv.nimber.presentation.ui.components.MainImageWithLoader
+import com.hrv.nimber.presentation.ui.components.showToast
 import com.hrv.nimber.presentation.viewmodel.ReceiptViewModel
 
 @Composable
@@ -34,12 +37,11 @@ fun CreateReceiptScreen(
     navController: NavHostController,
     viewModel: ReceiptViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     var date by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
-    //var currency by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
-
-    val context = LocalContext.current
+    var isValidDate by remember { mutableStateOf<Boolean?>(null) }
     var photoUriString by remember { mutableStateOf<String?>(null) }
 
     val takePictureLauncher = rememberLauncherForActivityResult(
@@ -54,8 +56,8 @@ fun CreateReceiptScreen(
     }
 
     val isReceiptValid =
-        date.isNotBlank() && amount.isNotBlank() &&  photoUriString.isNullOrBlank()
-            .not()
+        date.isNotBlank() && amount.isNotBlank() && photoUriString.isNullOrBlank()
+            .not() && (isValidDate == true)
 
     Column(
         modifier = Modifier
@@ -87,23 +89,27 @@ fun CreateReceiptScreen(
         }
 
         OutlinedTextField(
+            isError = isValidDate?.not() ?: false,
+            singleLine = true,
             value = date,
-            onValueChange = { date = it },
+            onValueChange = { input ->
+                date = input.take(10)
+                if (input.length == 10) {
+                    isValidDate = isValidDate(date)
+                }
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             label = { Text(stringResource(R.string.date_yyyy_mm_dd_format_label)) },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         OutlinedTextField(
+            singleLine = true,
             value = amount,
             onValueChange = { amount = it },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             label = { Text(stringResource(R.string.amount_label)) },
             modifier = Modifier.fillMaxWidth()
         )
-     /*   OutlinedTextField(
-            value = currency,
-            onValueChange = { currency = it },
-            label = { Text(stringResource(R.string.currency_label)) },
-            modifier = Modifier.fillMaxWidth()
-        )*/
 
         Spacer(modifier = Modifier.height(16.dp))
         Button(
@@ -112,9 +118,9 @@ fun CreateReceiptScreen(
                 viewModel.addReceipt(
                     date = date,
                     amount = amount.toFloatOrNull() ?: 0.0f,
-                    currency = "",
                     photoPath = photoUri?.toString() ?: ""
                 )
+                showToast(context, context.getString(R.string.receipt_added_label))
                 navController.popBackStack()
             },
             modifier = Modifier.fillMaxWidth()
@@ -124,3 +130,9 @@ fun CreateReceiptScreen(
     }
 
 }
+
+fun isValidDate(date: String): Boolean {
+    val dateRegex = Regex("""^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$""")
+    return dateRegex.matches(date)
+}
+

@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">NimberProject</string>
     <string name="capture_photo_label">Capture Photo</string>
-    <string name="date_yyyy_mm_dd_format_label">Date (YYYY-MM-DD)</string>
+    <string name="date_yyyy_mm_dd_format_label">YYYY-MM-DD</string>
     <string name="amount_label">Amount</string>
     <string name="currency_label">Currency</string>
     <string name="save_receipt_label">Save Receipt</string>
+    <string name="receipt_added_label">Receipt added!</string>
 </resources>

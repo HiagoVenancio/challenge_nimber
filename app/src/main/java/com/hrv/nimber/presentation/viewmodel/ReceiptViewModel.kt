@@ -26,7 +26,6 @@ class ReceiptViewModel @Inject constructor(
     private val repository: ReceiptRepository
 ) : ViewModel() {
 
-    // Expose receipts as a StateFlow
     val receipts: StateFlow<List<ReceiptsUiModel>> =
         repository.getReceipts()
             .map { entityList ->
@@ -40,7 +39,6 @@ class ReceiptViewModel @Inject constructor(
                 initialValue = emptyList()
             )
 
-
     fun createImageFileUri(context: Context): Uri? {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
         val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -48,9 +46,9 @@ class ReceiptViewModel @Inject constructor(
         return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", imageFile)
     }
 
-    fun addReceipt(date: String, amount: Float, currency: String, photoPath: String) {
+    fun addReceipt(date: String, amount: Float, photoPath: String) {
         viewModelScope.launch {
-            repository.addReceipt(date, amount, currency, photoPath)
+            repository.addReceipt(date, amount, photoPath)
         }
     }
 
@@ -65,6 +63,5 @@ data class ReceiptsUiModel(
     val id: Int = 0,
     val date: String = "",
     val amount: Float = 0.0f,
-    val currency: String = "",
     val photoPath: String = ""
 )

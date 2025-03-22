@@ -9,7 +9,6 @@ data class ReceiptEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: String,
     val amount: Float,
-    val currency: String,
     val photoPath: String
 ){
     companion object{
