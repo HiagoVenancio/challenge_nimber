@@ -12,7 +12,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hrv.nimber.navigation.Screen
 import com.hrv.nimber.presentation.ui.components.ReceiptItem
@@ -22,7 +21,7 @@ import com.hrv.nimber.presentation.viewmodel.ReceiptViewModel
 fun ReceiptListScreen(
     navController: NavHostController,
     viewModel: ReceiptViewModel,
-    onAddClick: () -> Unit = {} // Callback to navigate to the Add Receipt Screen
+    onAddClick: () -> Unit = {}
 ) {
     val receiptsState = viewModel.receipts.collectAsState()
 
@@ -42,6 +41,7 @@ fun ReceiptListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+
         ) {
             items(receiptsState.value) { receipt ->
                 ReceiptItem(receipt) {

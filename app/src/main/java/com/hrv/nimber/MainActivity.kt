@@ -12,7 +12,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -59,7 +61,6 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val configurationViewModel: ConfigurationViewModel = hiltViewModel()
                 val topBarConfig by configurationViewModel.topBarConfig.collectAsState()
-
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
@@ -106,11 +107,7 @@ class MainActivity : ComponentActivity() {
         permissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
-            permissions.entries.forEach { entry ->
-                if (checkIfPermissionIsGranted(entry.key).not()) {
-                    requestRequiredPermissions()
-                }
-            }
+            permissions.entries.forEach {}
         }
         requestRequiredPermissions()
     }

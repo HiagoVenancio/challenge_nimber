@@ -23,7 +23,7 @@ fun ReceiptItem(receipt: ReceiptsUiModel, onClickItem: (Int) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(8.dp)
             .clickable {
                 onClickItem.invoke(receipt.id)
             },
@@ -38,15 +38,10 @@ fun ReceiptItem(receipt: ReceiptsUiModel, onClickItem: (Int) -> Unit) {
                     .padding(10.dp)
             )
 
-            Spacer(modifier = Modifier.width(10.dp))
-
-            Column(modifier = Modifier.padding(8.dp)) {
-                Text(text = "ID: ${receipt.id}", style = MaterialTheme.typography.bodyLarge)
-                Text(text = "DATE: ${receipt.date}", style = MaterialTheme.typography.bodyLarge)
-                Text(
-                    text = "AMOUNT: ${receipt.amount.toFormatCurrency()}",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+            Column(modifier = Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp)) {
+                TextBodyLarge(title = "Id: ${receipt.id}")
+                TextBodyLarge(title = "Date: ${receipt.date}")
+                TextBodyLarge(title = "Amount: ${receipt.amount.toFormatCurrency()}")
             }
         }
 
