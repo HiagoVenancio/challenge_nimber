@@ -1,6 +1,7 @@
 package com.hrv.nimber.presentation.ui
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,18 +34,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hrv.nimber.R
 import com.hrv.nimber.presentation.ui.components.ButtonWithTextAndAction
 import com.hrv.nimber.presentation.ui.components.SwipableImageBanner
 import com.hrv.nimber.presentation.ui.components.showToast
+import com.hrv.nimber.presentation.viewmodel.ConfigurationViewModel
 import com.hrv.nimber.presentation.viewmodel.ReceiptViewModel
 
 @Composable
 fun CreateReceiptScreen(
     navController: NavHostController,
-    viewModel: ReceiptViewModel
+    viewModel: ReceiptViewModel,
+    configurationViewModel: ConfigurationViewModel
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -54,7 +58,20 @@ fun CreateReceiptScreen(
     val photoUriList = remember { mutableStateListOf<Uri>() }
     var currentPhotoUri by remember { mutableStateOf<Uri?>(null) }
 
+    //val topBarConfig by configurationViewModel.topBarConfig.collectAsState()
+
+    LaunchedEffect(Unit) {
+        configurationViewModel.displayBackButton()
+    }
+
+    BackHandler(enabled = true) {
+        configurationViewModel.hideBackButton()
+        navController.popBackStack()
+        //cleanStatusAndGoToMainScreen(shipmentOrderPaymentViewModel, navController)
+    }
+
     val maxPhotos = 3
+    val maxDateSize = 10
 
     val takePictureLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture()
@@ -116,8 +133,8 @@ fun CreateReceiptScreen(
             singleLine = true,
             value = date,
             onValueChange = { input ->
-                date = input.take(10)
-                if (input.length == 10) {
+                date = input.take(maxDateSize)
+                if (input.length == maxDateSize) {
                     isValidDate = isValidDate(date)
                 }
             },
@@ -152,7 +169,7 @@ fun CreateReceiptScreen(
             onClick = {
                 viewModel.addReceipt(
                     date = date,
-                    amount = amount.toFloatOrNull() ?: 0.0f,
+                    amount = getAmountFormated(amount) ?: 0.0f,
                     photoPath = photoUriList.map { it.toString() }
                 )
                 showToast(context, context.getString(R.string.receipt_added_label))
@@ -163,11 +180,15 @@ fun CreateReceiptScreen(
             Text(stringResource(R.string.save_receipt_label))
         }
     }
-
 }
 
 fun isValidDate(date: String): Boolean {
     val dateRegex = Regex("""^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$""")
     return dateRegex.matches(date)
+}
+
+fun getAmountFormated(amount: String): Float? {
+    val formattedAmount = amount.replace(",", ".")
+    return formattedAmount.toFloatOrNull()
 }
 

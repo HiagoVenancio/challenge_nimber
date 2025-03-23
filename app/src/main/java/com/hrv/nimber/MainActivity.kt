@@ -1,6 +1,8 @@
 package com.hrv.nimber
 
-import android.Manifest
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.content.pm.PackageManager
 import android.os.Build
@@ -16,20 +18,29 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.hrv.nimber.navigation.AppNavigation
+import com.hrv.nimber.presentation.viewmodel.ConfigurationViewModel
+import com.hrv.nimber.presentation.viewmodel.TopBarConfig
 import com.hrv.nimber.ui.theme.NimberProjectTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,13 +53,31 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             NimberProjectTheme {
                 val navController = rememberNavController()
+                val configurationViewModel: ConfigurationViewModel = hiltViewModel()
+                val topBarConfig by configurationViewModel.topBarConfig.collectAsState()
+
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
+                            navigationIcon = {
+                                if (topBarConfig == TopBarConfig.DisplayBackButton) {
+                                    IconButton(onClick = {
+                                        configurationViewModel.hideBackButton()
+                                        navController.popBackStack()
+                                    }) {
+                                        Icon(
+                                            tint = Color.White,
+                                            imageVector = Icons.Default.ArrowBack,
+                                            contentDescription = ""
+                                        )
+                                    }
+                                }
+                            },
                             colors = TopAppBarDefaults.topAppBarColors()
                                 .copy(containerColor = MaterialTheme.colorScheme.primary),
                             title = {
@@ -68,7 +97,7 @@ class MainActivity : ComponentActivity() {
                     },
                 ) { innerPadding ->
                     Column(modifier = Modifier.padding(innerPadding)) {
-                        AppNavigation(navController)
+                        AppNavigation(navController, configurationViewModel)
                     }
                 }
             }
@@ -77,9 +106,11 @@ class MainActivity : ComponentActivity() {
         permissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { permissions ->
-            permissions.entries.forEach { entry -> }
-            val granted = permissions[WRITE_EXTERNAL_STORAGE] == true
-
+            permissions.entries.forEach { entry ->
+                if (checkIfPermissionIsGranted(entry.key).not()) {
+                    requestRequiredPermissions()
+                }
+            }
         }
         requestRequiredPermissions()
     }
@@ -87,23 +118,21 @@ class MainActivity : ComponentActivity() {
     private fun requestRequiredPermissions() {
         val permissionsToRequest = mutableListOf<String>()
 
-        // Request CAMERA permission regardless of version
-        permissionsToRequest.add(Manifest.permission.CAMERA)
+        permissionsToRequest.add(CAMERA)
 
         // On Android 13 (TIRAMISU) use READ_MEDIA_IMAGES instead of READ_EXTERNAL_STORAGE
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionsToRequest.add(Manifest.permission.READ_MEDIA_IMAGES)
+            permissionsToRequest.add(READ_MEDIA_IMAGES)
         } else {
             // For older devices
-            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            permissionsToRequest.add(READ_EXTERNAL_STORAGE)
+            permissionsToRequest.add(WRITE_EXTERNAL_STORAGE)
         }
 
         if (permissionsToRequest.isNotEmpty()) {
             permissionLauncher.launch(permissionsToRequest.toTypedArray())
         }
     }
-
 
     private fun checkIfPermissionIsGranted(permission: String) =
         (ContextCompat.checkSelfPermission(this, permission)

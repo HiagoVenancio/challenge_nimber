@@ -13,6 +13,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.hrv.nimber.presentation.ui.CreateReceiptScreen
 import com.hrv.nimber.presentation.ui.ReceiptDetails
 import com.hrv.nimber.presentation.ui.ReceiptListScreen
+import com.hrv.nimber.presentation.viewmodel.ConfigurationViewModel
 import com.hrv.nimber.presentation.viewmodel.ReceiptViewModel
 
 
@@ -28,6 +29,7 @@ sealed class Screen(val route: String) {
 @Composable
 fun AppNavigation(
     navController: NavHostController,
+    configurationViewModel: ConfigurationViewModel,
 ) {
     val receiptViewModel: ReceiptViewModel = hiltViewModel()
 
@@ -52,15 +54,18 @@ fun AppNavigation(
         composable(Screen.CreateReceiptScreen.route) {
             CreateReceiptScreen(
                 navController = navController,
-                receiptViewModel
+                receiptViewModel,
+                configurationViewModel
             )
         }
 
         composable(Screen.DetailsReceiptScreen.route) { backStackEntry ->
             val itemId = backStackEntry.arguments?.getString("itemId") ?: return@composable
             ReceiptDetails(
+                navController,
                 itemId = itemId.toInt(),
-                receiptViewModel
+                receiptViewModel,
+                configurationViewModel
             )
         }
     }
