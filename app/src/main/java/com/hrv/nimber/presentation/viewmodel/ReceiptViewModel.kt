@@ -3,6 +3,7 @@ package com.hrv.nimber.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hrv.nimber.data.mapper.toUiModel
+import com.hrv.nimber.data.repository.IReceiptRepository
 import com.hrv.nimber.data.repository.ReceiptRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ReceiptViewModel @Inject constructor(
-    private val repository: ReceiptRepository
+    private val repository: IReceiptRepository
 ) : ViewModel() {
 
     val receipts: StateFlow<List<ReceiptsUiModel>> =
@@ -27,7 +28,7 @@ class ReceiptViewModel @Inject constructor(
             }
             .stateIn(
                 scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
+                started = SharingStarted.Eagerly,
                 initialValue = emptyList()
             )
 

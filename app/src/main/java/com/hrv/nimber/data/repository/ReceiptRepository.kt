@@ -6,14 +6,21 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
+interface IReceiptRepository{
+    fun getReceipts(): Flow<List<ReceiptEntity>>
+    suspend fun addReceipt(date: String, amount: Float, photoPaths: List<String>)
+    fun getReceiptById(itemId: Int): Flow<ReceiptEntity?>
+    suspend fun deleteReceipt(itemId: Int)
+}
+
 @Singleton
 class ReceiptRepository @Inject constructor(
     private val receiptDao: ReceiptDao
-) {
+) : IReceiptRepository {
 
-    fun getReceipts(): Flow<List<ReceiptEntity>> = receiptDao.getAllReceipts()
+    override fun getReceipts(): Flow<List<ReceiptEntity>> = receiptDao.getAllReceipts()
 
-    suspend fun addReceipt(date: String, amount: Float, photoPaths: List<String>) {
+    override suspend fun addReceipt(date: String, amount: Float, photoPaths: List<String>) {
         val receipt = ReceiptEntity(
             date = date,
             amount = amount,
@@ -22,9 +29,11 @@ class ReceiptRepository @Inject constructor(
         receiptDao.insertReceipt(receipt)
     }
 
-    fun getReceiptById(itemId: Int) = receiptDao.getReceiptById(itemId)
+    override fun getReceiptById(itemId: Int): Flow<ReceiptEntity?> {
+        return receiptDao.getReceiptById(itemId)
+    }
 
-    suspend fun deleteReceipt(itemId: Int) {
+    override suspend fun deleteReceipt(itemId: Int) {
         receiptDao.deleteReceiptById(itemId)
     }
 }

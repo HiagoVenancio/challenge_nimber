@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.hrv.nimber.data.local.AppDatabase
 import com.hrv.nimber.data.local.dao.ReceiptDao
+import com.hrv.nimber.data.repository.IReceiptRepository
 import com.hrv.nimber.data.repository.ReceiptRepository
 import dagger.Module
 import dagger.Provides
@@ -27,7 +28,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideReceiptRepository(receiptDao: ReceiptDao): ReceiptRepository {
+    fun provideReceiptRepository(receiptDao: ReceiptDao): IReceiptRepository {
         return ReceiptRepository(receiptDao)
     }
 
