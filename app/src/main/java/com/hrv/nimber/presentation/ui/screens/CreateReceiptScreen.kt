@@ -1,4 +1,4 @@
-package com.hrv.nimber.presentation.ui
+package com.hrv.nimber.presentation.ui.screens
 
 import android.Manifest
 import android.net.Uri

@@ -1,4 +1,4 @@
-package com.hrv.nimber.presentation.ui
+package com.hrv.nimber.presentation.ui.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement

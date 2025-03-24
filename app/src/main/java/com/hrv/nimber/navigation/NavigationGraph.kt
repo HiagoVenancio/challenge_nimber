@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.hrv.nimber.presentation.ui.CreateReceiptScreen
-import com.hrv.nimber.presentation.ui.ReceiptDetails
+import com.hrv.nimber.presentation.ui.screens.CreateReceiptScreen
+import com.hrv.nimber.presentation.ui.screens.ReceiptDetails
 import com.hrv.nimber.presentation.ui.ReceiptListScreen
 import com.hrv.nimber.presentation.viewmodel.ConfigurationViewModel
 import com.hrv.nimber.presentation.viewmodel.ReceiptViewModel
