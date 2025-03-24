@@ -5,7 +5,6 @@ A simple Android application for freelancers to capture and manage expense recei
 ## Features
 
 - Capture photos of receipts using the device camera.
-- Select images from the gallery.
 - Auto-format date inputs with masking.
 - Save and display multiple photo URIs per receipt.
 - Offline support with Room database.
