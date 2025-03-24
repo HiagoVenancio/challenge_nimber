@@ -10,20 +10,30 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.hrv.nimber.R
 import com.hrv.nimber.navigation.Screen
 import com.hrv.nimber.presentation.ui.components.ReceiptItem
+import com.hrv.nimber.presentation.viewmodel.ConfigurationViewModel
 import com.hrv.nimber.presentation.viewmodel.ReceiptViewModel
 
 @Composable
 fun ReceiptListScreen(
     navController: NavHostController,
     viewModel: ReceiptViewModel,
+    configurationViewModel: ConfigurationViewModel,
     onAddClick: () -> Unit = {}
 ) {
     val receiptsState = viewModel.receipts.collectAsState()
+    val topBarConfig = configurationViewModel.topBarConfig.collectAsState()
+
+    LaunchedEffect(topBarConfig) {
+        configurationViewModel.mainScreenSetUp()
+    }
 
     Scaffold(
         floatingActionButton = {
@@ -32,7 +42,7 @@ fun ReceiptListScreen(
             }) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add Receipt"
+                    contentDescription = stringResource(R.string.add_receipt_label)
                 )
             }
         }

@@ -1,6 +1,6 @@
 package com.hrv.nimber.data.mapper
 
-import com.hrv.nimber.data.local.ReceiptEntity
+import com.hrv.nimber.data.local.entities.ReceiptEntity
 import com.hrv.nimber.presentation.viewmodel.ReceiptsUiModel
 
 fun ReceiptEntity.toUiModel(): ReceiptsUiModel = ReceiptsUiModel(

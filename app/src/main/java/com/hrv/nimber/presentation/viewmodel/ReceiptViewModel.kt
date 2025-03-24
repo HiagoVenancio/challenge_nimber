@@ -1,28 +1,16 @@
 package com.hrv.nimber.presentation.viewmodel
 
-import android.content.Context
-import android.net.Uri
-import android.os.Environment
-import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hrv.nimber.data.local.ReceiptEntity
 import com.hrv.nimber.data.mapper.toUiModel
 import com.hrv.nimber.data.repository.ReceiptRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,20 +35,13 @@ class ReceiptViewModel @Inject constructor(
     private val _detailReceipt = MutableStateFlow<ReceiptsUiModel?>(null)
     val detailReceipt: StateFlow<ReceiptsUiModel?> = _detailReceipt
 
-    fun createImageFileUri(context: Context): Uri? {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val imageFile = File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
-        return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", imageFile)
-    }
-
     fun addReceipt(date: String, amount: Float, photoPath: List<String>) {
         viewModelScope.launch {
             repository.addReceipt(date, amount, photoPath)
         }
     }
 
-    fun deleteReceipt(receipt: ReceiptEntity) {
+    fun deleteReceipt(receipt: Int) {
         viewModelScope.launch {
             repository.deleteReceipt(receipt)
         }
@@ -70,12 +51,10 @@ class ReceiptViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getReceiptById(itemId)
                 .collect {
-                    _detailReceipt.value = it.toUiModel()
+                    _detailReceipt.value = it?.toUiModel()
                 }
         }
-
     }
-
 }
 
 data class ReceiptsUiModel(

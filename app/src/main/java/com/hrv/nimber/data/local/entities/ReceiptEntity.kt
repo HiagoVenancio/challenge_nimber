@@ -1,10 +1,9 @@
-package com.hrv.nimber.data.local
+package com.hrv.nimber.data.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.hrv.nimber.data.local.ReceiptEntity.Companion.TABLE_NAME
 
-@Entity(tableName = TABLE_NAME)
+@Entity(tableName = ReceiptEntity.Companion.TABLE_NAME)
 data class ReceiptEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val date: String,

@@ -1,8 +1,10 @@
 package com.hrv.nimber.presentation.ui
 
+import android.Manifest
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,7 +21,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +37,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hrv.nimber.R
+import com.hrv.nimber.extensions.utils.checkIfPermissionIsGranted
+import com.hrv.nimber.extensions.utils.createImageFileUri
+import com.hrv.nimber.extensions.utils.getAmountFormated
+import com.hrv.nimber.extensions.utils.isValidDate
 import com.hrv.nimber.presentation.ui.components.ButtonWithTextAndAction
 import com.hrv.nimber.presentation.ui.components.SwipableImageBanner
 import com.hrv.nimber.presentation.ui.components.showToast
@@ -46,7 +51,8 @@ import com.hrv.nimber.presentation.viewmodel.ReceiptViewModel
 fun CreateReceiptScreen(
     navController: NavHostController,
     viewModel: ReceiptViewModel,
-    configurationViewModel: ConfigurationViewModel
+    configurationViewModel: ConfigurationViewModel,
+    permissionLauncher: ActivityResultLauncher<Array<String>>
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -58,7 +64,6 @@ fun CreateReceiptScreen(
     val photoUriList = remember { mutableStateListOf<Uri>() }
     var currentPhotoUri by remember { mutableStateOf<Uri?>(null) }
 
-    //val topBarConfig by configurationViewModel.topBarConfig.collectAsState()
 
     LaunchedEffect(Unit) {
         configurationViewModel.displayBackButton()
@@ -67,7 +72,6 @@ fun CreateReceiptScreen(
     BackHandler(enabled = true) {
         configurationViewModel.hideBackButton()
         navController.popBackStack()
-        //cleanStatusAndGoToMainScreen(shipmentOrderPaymentViewModel, navController)
     }
 
     val maxPhotos = 3
@@ -82,7 +86,12 @@ fun CreateReceiptScreen(
                     photoUriList.add(it)
                 }
             } else {
-                showToast(context, "You can only add $maxPhotos pictures.")
+                showToast(
+                    context,
+                    context.getString(
+                        R.string.you_can_only_take_pictures_label,
+                        maxPhotos.toString()
+                    ))
             }
         } else {
             currentPhotoUri = null
@@ -114,14 +123,25 @@ fun CreateReceiptScreen(
         ) {
 
             ButtonWithTextAndAction(R.string.capture_photo_label, buttonModifier) {
-                if (photoUriList.size == 3) {
-                    showToast(context, "You can only take $maxPhotos pictures.")
-                    return@ButtonWithTextAndAction
-                }
-                val uri = viewModel.createImageFileUri(context)
-                currentPhotoUri = uri
-                uri?.let {
-                    takePictureLauncher.launch(it)
+                if (checkIfPermissionIsGranted(context, Manifest.permission.CAMERA)
+                ) {
+                    if (photoUriList.size == 3) {
+                        showToast(
+                            context,
+                            context.getString(
+                                R.string.you_can_only_take_pictures_label,
+                                maxPhotos.toString()
+                            )
+                        )
+                        return@ButtonWithTextAndAction
+                    }
+                    val uri = createImageFileUri(context)
+                    currentPhotoUri = uri
+                    uri?.let {
+                        takePictureLauncher.launch(it)
+                    }
+                } else {
+                    permissionLauncher.launch(listOf(Manifest.permission.CAMERA).toTypedArray())
                 }
             }
         }
@@ -182,13 +202,5 @@ fun CreateReceiptScreen(
     }
 }
 
-fun isValidDate(date: String): Boolean {
-    val dateRegex = Regex("""^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$""")
-    return dateRegex.matches(date)
-}
 
-fun getAmountFormated(amount: String): Float? {
-    val formattedAmount = amount.replace(",", ".")
-    return formattedAmount.toFloatOrNull()
-}
 

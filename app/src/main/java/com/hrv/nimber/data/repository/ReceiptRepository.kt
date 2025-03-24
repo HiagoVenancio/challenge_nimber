@@ -1,7 +1,7 @@
 package com.hrv.nimber.data.repository
 
-import com.hrv.nimber.data.local.ReceiptDao
-import com.hrv.nimber.data.local.ReceiptEntity
+import com.hrv.nimber.data.local.dao.ReceiptDao
+import com.hrv.nimber.data.local.entities.ReceiptEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -22,10 +22,9 @@ class ReceiptRepository @Inject constructor(
         receiptDao.insertReceipt(receipt)
     }
 
-    suspend fun getReceiptById(itemId: Int) = receiptDao.getReceiptById(itemId)
+    fun getReceiptById(itemId: Int) = receiptDao.getReceiptById(itemId)
 
-
-    suspend fun deleteReceipt(receipt: ReceiptEntity) {
-        receiptDao.deleteReceipt(receipt)
+    suspend fun deleteReceipt(itemId: Int) {
+        receiptDao.deleteReceiptById(itemId)
     }
 }

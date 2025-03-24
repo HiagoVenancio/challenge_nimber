@@ -3,7 +3,7 @@ package com.hrv.nimber.di
 import android.content.Context
 import androidx.room.Room
 import com.hrv.nimber.data.local.AppDatabase
-import com.hrv.nimber.data.local.ReceiptDao
+import com.hrv.nimber.data.local.dao.ReceiptDao
 import com.hrv.nimber.data.repository.ReceiptRepository
 import dagger.Module
 import dagger.Provides

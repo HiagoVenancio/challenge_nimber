@@ -11,24 +11,42 @@ import javax.inject.Inject
 @HiltViewModel
 class ConfigurationViewModel @Inject constructor() : ViewModel() {
 
-    private val _topBarConfig = MutableStateFlow<TopBarConfig>(TopBarConfig.HideBackButton)
-    val topBarConfig: StateFlow<TopBarConfig> = _topBarConfig
+    private val _topBarConfig = MutableStateFlow<List<TopBarConfig>>(listOf())
+    val topBarConfig: StateFlow<List<TopBarConfig>> = _topBarConfig
+
+    fun mainScreenSetUp() {
+         _topBarConfig.value = emptyList()
+    }
 
     fun displayBackButton() {
         viewModelScope.launch {
-            _topBarConfig.value = TopBarConfig.DisplayBackButton
+            //_topBarConfig.value. add(TopBarConfig.DisplayBackButton)
+            _topBarConfig.value += TopBarConfig.DisplayBackButton
         }
     }
 
     fun hideBackButton() {
         viewModelScope.launch {
-            _topBarConfig.value = TopBarConfig.HideBackButton
+            _topBarConfig.value -= TopBarConfig.DisplayBackButton
         }
     }
 
+    fun displayRightButton() {
+        viewModelScope.launch {
+             _topBarConfig.value += TopBarConfig.DisplayRightButton
+        }
+    }
+
+    fun hideRightButton() {
+        viewModelScope.launch {
+            _topBarConfig.value -= TopBarConfig.HideBackButton
+        }
+    }
 }
 
 sealed class TopBarConfig {
     object DisplayBackButton : TopBarConfig()
     object HideBackButton : TopBarConfig()
+    object DisplayRightButton : TopBarConfig()
+    object HideRightButton : TopBarConfig()
 }

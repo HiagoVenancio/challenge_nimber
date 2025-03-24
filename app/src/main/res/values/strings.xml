@@ -7,4 +7,7 @@
     <string name="currency_label">Currency</string>
     <string name="save_receipt_label">Save Receipt</string>
     <string name="receipt_added_label">Receipt added!</string>
+    <string name="receipt_deleted_label">Receipt deleted!</string>
+    <string name="add_receipt_label">Add Receipt</string>
+    <string name="you_can_only_take_pictures_label">You can only take %1$s pictures.</string>
 </resources>
