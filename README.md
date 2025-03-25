@@ -19,3 +19,8 @@ A simple Android application for freelancers to capture and manage expense recei
 - **Hilt**
 - **Coroutines & StateFlow**
 - **JUnit4 & AndroidX Testing**
+
+## DEMO
+
+https://github.com/user-attachments/assets/b8ee0d66-de85-4b44-8975-00b56bc99d59
+
